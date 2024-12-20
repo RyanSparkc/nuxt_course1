@@ -96,10 +96,10 @@ onUnmounted(() => {
                   style="right: 0; left: auto; border-radius: 20px;"
                 >
                   <li>
-                    <a
+                    <NuxtLink
                       class="dropdown-item px-6 py-4"
-                      href="#"
-                    >我的帳戶</a>
+                      to="/user/a/userProfile"
+                    >我的帳戶</NuxtLink>
                   </li>
                   <li>
                     <a
