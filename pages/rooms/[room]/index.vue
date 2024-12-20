@@ -1,572 +1,568 @@
 <script setup>
-import BookingLoading from '@/components/rooms/BookingLoading.vue';
-import { Icon } from '@iconify/vue';
-
+import DatePickerModal from "@/components/rooms/DatePickerModal.vue";
+import { Icon } from "@iconify/vue";
 
 definePageMeta({
-  name: 'room-detail',
-})
+  name: "room-detail",
+});
 
-const router = useRouter();
+const datePickerModal = ref(null);
 
-const goBack = () => {
-  router.back();
-}
-const isLoading = ref(false);
+const openModal = () => {
+  datePickerModal.value.openModal();
+};
 
-const confirmBooking = () => {
-  isLoading.value = true;
+const MAX_BOOKING_PEOPLE = 10;
+const bookingPeople = ref(1);
 
-  setTimeout(() => {
-    isLoading.value = false;
-    router.push({
-      name: 'booking-confirmation',
-      params: {
-        bookingId: 'HH2302183151222'
-      }
-    })
-  }, 1500);
-}
+const daysCount = ref(0);
 
+const daysFormatOnMobile = (date) => date?.split("-").slice(1, 3).join(" / ");
+
+const formatDate = (date) => {
+  const offsetToUTC8 = date.getHours() + 8;
+  date.setHours(offsetToUTC8);
+  return date.toISOString().split("T")[0];
+};
+
+const currentDate = new Date();
+
+const bookingDate = reactive({
+  date: {
+    start: formatDate(currentDate),
+    end: null,
+  },
+  minDate: new Date(),
+  maxDate: new Date(currentDate.setFullYear(currentDate.getFullYear() + 1)),
+});
+
+const handleDateChange = (bookingInfo) => {
+  const { start, end } = bookingInfo.date;
+  bookingDate.date.start = start;
+  bookingDate.date.end = end;
+
+  bookingPeople.value = bookingInfo?.people || 1;
+  daysCount.value = bookingInfo.daysCount;
+};
 </script>
 
 <template>
-  <main class="pt-18 pt-md-30 bg-neutral-120">
+  <main class="mt-18 mt-md-30 bg-neutral-100">
+    <section class="p-md-20 bg-primary-10">
+      <div class="d-none d-md-block position-relative">
+        <div class="d-flex gap-2 rounded-3xl overflow-hidden">
+          <div style="width: 52.5vw">
+            <img
+              class="w-100"
+              src="@/assets/images/room-a-1.png"
+              alt="room-a-1"
+            />
+          </div>
+          <div class="d-flex flex-wrap gap-md-2" style="width: 42.5vw">
+            <div class="d-flex gap-md-2">
+              <img
+                class="w-50"
+                src="@/assets/images/room-a-2.png"
+                alt="room-a-2"
+              />
+              <img
+                class="w-50"
+                src="@/assets/images/room-a-3.png"
+                alt="room-a-3"
+              />
+            </div>
+            <div class="d-flex gap-md-2">
+              <img
+                class="w-50"
+                src="@/assets/images/room-a-4.png"
+                alt="room-a-4"
+              />
+              <img
+                class="w-50"
+                src="@/assets/images/room-a-5.png"
+                alt="room-a-5"
+              />
+            </div>
+          </div>
+        </div>
+        <button
+          class="position-absolute btn btn-primary-10 px-8 py-4 me-3 text-primary-100 border-primary-100 fw-bold rounded-3"
+          style="bottom: 40px; right: 40px"
+          type="button"
+        >
+          看更多
+        </button>
+      </div>
+      <div class="d-md-none position-relative">
+        <img
+          class="img-fluid"
+          src="@/assets/images/room-a-1.png"
+          alt="room-a-1"
+        />
+        <button
+          class="position-absolute btn btn-primary-10 px-8 py-4 text-primary-100 border-primary-100 fw-bold rounded-3"
+          style="bottom: 23px; right: 12px"
+          type="button"
+        >
+          看更多
+        </button>
+      </div>
+    </section>
+
     <section class="py-10 py-md-30 bg-primary-10">
       <div class="container">
-        <button
-          class="d-flex align-items-baseline gap-2 mb-10 bg-transparent border-0"
-          type="button"
-          @click="goBack"
-        >
-          <Icon
-            class="fs-5 text-neutral-100"
-            icon="mdi:keyboard-arrow-left"
-          />
-          <h1 class="mb-0 text-neutral-100 fs-3 fw-bold">
-            確認訂房資訊
-          </h1>
-        </button>
-
-        <div class="row gap-10 gap-md-0">
-          <div class="col-12 col-md-7">
-            <section>
-              <h2 class="mb-8 mb-md-10 text-neutral-100 fs-6 fs-md-4 fw-bold">
-                訂房資訊
-              </h2>
-              <div class="d-flex flex-column gap-6">
-                <div class="d-flex justify-content-between align-items-center text-neutral-100">
-                  <div>
-                    <h3 class="title-deco mb-2 fs-7 fw-bold">
-                      選擇房型
-                    </h3>
-                    <p class="mb-0 fw-medium">
-                      尊爵雙人房
-                    </p>
-                  </div>
-                  <button
-                    class="bg-transparent border-0 fw-bold text-decoration-underline"
-                    type="button"
-                  >
-                    編輯
-                  </button>
-                </div>
-                <div class="d-flex justify-content-between align-items-center text-neutral-100">
-                  <div>
-                    <h3 class="title-deco mb-2 fs-7 fw-bold">
-                      訂房日期
-                    </h3>
-                    <p class="mb-2 fw-medium">
-                      入住：12 月 4 日星期二
-                    </p>
-                    <p class="mb-0 fw-medium">
-                      退房：12 月 6 日星期三
-                    </p>
-                  </div>
-                  <button
-                    class="bg-transparent border-0 fw-bold text-decoration-underline"
-                    type="button"
-                  >
-                    編輯
-                  </button>
-                </div>
-                <div class="d-flex justify-content-between align-items-center text-neutral-100">
-                  <div>
-                    <h3 class="title-deco mb-2 fs-7 fw-bold">
-                      房客人數
-                    </h3>
-                    <p class="mb-0 fw-medium">
-                      2 人
-                    </p>
-                  </div>
-                  <button
-                    class="bg-transparent border-0 fw-bold text-decoration-underline"
-                    type="button"
-                  >
-                    編輯
-                  </button>
-                </div>
-              </div>
-            </section>
-
-            <hr class="my-10 my-md-12 opacity-100 text-neutral-60">
+        <div class="row">
+          <div class="col-12 col-md-7 d-flex flex-column gap-6 gap-md-20">
+            <div>
+              <h1 class="mb-4 text-neutral-100 fw-bold">尊爵雙人房</h1>
+              <p class="mb-0 text-neutral-80 fs-8 fs-md-7 fw-medium">
+                享受高級的住宿體驗，尊爵雙人房提供給您舒適寬敞的空間和精緻的裝潢。
+              </p>
+            </div>
 
             <section>
-              <div class="d-flex justify-content-between align-items-center mb-10">
-                <h2 class="mb-0 text-neutral-100 fs-6 fs-md-4 fw-bold">
-                  訂房人資訊
-                </h2>
-                <button
-                  class="text-primary-100 bg-transparent border-0 fw-bold text-decoration-underline"
-                  type="button"
+              <h3
+                class="title-deco mb-4 mb-md-6 text-neutral-100 fs-7 fs-md-5 fw-bold"
+              >
+                房型基本資訊
+              </h3>
+              <ul class="d-flex gap-4 list-unstyled">
+                <li
+                  class="card-info px-4 py-5 bg-neutral-0 border border-primary-40 rounded-3"
                 >
-                  套用會員資料
-                </button>
-              </div>
-
-              <div class="d-flex flex-column gap-6">
-                <div class="text-neutral-100">
-                  <label
-                    for="name"
-                    class="form-label fs-8 fs-md-7 fw-bold"
-                  >姓名</label>
-                  <input
-                    id="name"
-                    type="text"
-                    class="form-control p-4 fs-8 fs-md-7 rounded-3"
-                    placeholder="請輸入姓名"
-                  >
-                </div>
-
-                <div class="text-neutral-100">
-                  <label
-                    for="phone"
-                    class="form-label fs-8 fs-md-7 fw-bold"
-                  >手機號碼</label>
-                  <input
-                    id="phone"
-                    type="tel"
-                    class="form-control p-4 fs-8 fs-md-7 rounded-3"
-                    placeholder="請輸入手機號碼"
-                  >
-                </div>
-
-                <div class="text-neutral-100">
-                  <label
-                    for="email"
-                    class="form-label fs-8 fs-md-7 fw-bold"
-                  >電子信箱</label>
-                  <input
-                    id="email"
-                    type="email"
-                    class="form-control p-4 fs-8 fs-md-7 rounded-3"
-                    placeholder="請輸入電子信箱"
-                  >
-                </div>
-
-                <div class="text-neutral-100">
-                  <label
-                    for="address"
-                    class="form-label fs-8 fs-md-7 fw-bold"
-                  >地址</label>
-                  <div className="d-flex gap-2 mb-4">
-                    <select
-                      class="form-select w-50 p-4 text-neutral-80 fs-8 fs-md-7 fw-medium rounded-3"
-                    >
-                      <option value="臺北市">
-                        臺北市
-                      </option>
-                      <option value="臺中市">
-                        臺中市
-                      </option>
-                      <option
-                        selected
-                        value="高雄市"
-                      >
-                        高雄市
-                      </option>
-                    </select>
-                    <select
-                      class="form-select w-50 p-4 text-neutral-80 fs-8 fs-md-7 fw-medium rounded-3"
-                    >
-                      <option value="前金區">
-                        前金區
-                      </option>
-                      <option value="鹽埕區">
-                        鹽埕區
-                      </option>
-                      <option
-                        selected
-                        value="新興區"
-                      >
-                        新興區
-                      </option>
-                    </select>
-                  </div>
-                  <input
-                    id="address"
-                    type="text"
-                    class="form-control p-4 fs-8 fs-md-7 rounded-3"
-                    placeholder="請輸入詳細地址"
-                  >
-                </div>
-              </div>
+                  <Icon
+                    class="mb-2 fs-5 text-primary-100"
+                    icon="fluent:slide-size-24-filled"
+                  />
+                  <p class="mb-0 fw-bold text-neutral-80 text-nowrap">24 坪</p>
+                </li>
+                <li
+                  class="card-info px-4 py-5 bg-neutral-0 border border-primary-40 rounded-3"
+                >
+                  <Icon
+                    class="mb-2 fs-5 text-primary-100"
+                    icon="material-symbols:king-bed"
+                  />
+                  <p class="mb-0 fw-bold text-neutral-80 text-nowrap">
+                    1 張大床
+                  </p>
+                </li>
+                <li
+                  class="card-info px-4 py-5 bg-neutral-0 border border-primary-40 rounded-3"
+                >
+                  <Icon
+                    class="mb-2 fs-5 text-primary-100"
+                    icon="ic:baseline-person"
+                  />
+                  <p class="mb-0 fw-bold text-neutral-80 text-nowrap">2-4 人</p>
+                </li>
+              </ul>
             </section>
 
-            <hr class="my-10 my-md-12 opacity-100 text-neutral-60">
+            <section>
+              <h3
+                class="title-deco mb-4 mb-md-6 text-neutral-100 fs-7 fs-md-5 fw-bold"
+              >
+                房間格局
+              </h3>
+              <ul
+                class="d-flex flex-wrap gap-6 gap-md-10 p-6 bg-neutral-0 fs-8 fs-md-7 rounded-3 list-unstyled"
+              >
+                <li class="d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">市景</p>
+                </li>
+                <li class="d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">獨立衛浴</p>
+                </li>
+                <li class="d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">客廳</p>
+                </li>
+                <li class="d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">書房</p>
+                </li>
+                <li class="d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">樓層電梯</p>
+                </li>
+              </ul>
+            </section>
 
             <section>
-              <h2 class="mb-8 mb-md-10 text-neutral-100 fs-6 fs-md-4 fw-bold">
-                房間資訊
-              </h2>
-              <div class="d-flex flex-column gap-6">
-                <section>
-                  <h3 class="title-deco mb-4 mb-md-6 fs-7 fs-md-5 fw-bold">
-                    房型基本資訊
-                  </h3>
-                  <ul class="d-flex gap-4 list-unstyled">
-                    <li class="card-info px-4 py-5 bg-neutral-0 border border-primary-40 rounded-3">
-                      <Icon
-                        class="mb-2 fs-5 text-primary-100"
-                        icon="fluent:slide-size-24-filled"
-                      />
-                      <p class="mb-0 fw-bold text-neutral-80 text-nowrap">
-                        24 坪
-                      </p>
-                    </li>
-                    <li class="card-info px-4 py-5 bg-neutral-0 border border-primary-40 rounded-3">
-                      <Icon
-                        class="mb-2 fs-5 text-primary-100"
-                        icon="material-symbols:king-bed"
-                      />
-                      <p class="mb-0 fw-bold text-neutral-80 text-nowrap">
-                        1 張大床
-                      </p>
-                    </li>
-                    <li class="card-info px-4 py-5 bg-neutral-0 border border-primary-40 rounded-3">
-                      <Icon
-                        class="mb-2 fs-5 text-primary-100"
-                        icon="ic:baseline-person"
-                      />
-                      <p class="mb-0 fw-bold text-neutral-80 text-nowrap">
-                        2-4 人
-                      </p>
-                    </li>
-                  </ul>
-                </section>
+              <h3
+                class="title-deco mb-4 mb-md-6 text-neutral-100 fs-7 fs-md-5 fw-bold"
+              >
+                房內設備
+              </h3>
+              <ul
+                class="d-flex flex-wrap row-gap-2 column-gap-10 p-6 mb-0 bg-neutral-0 fs-8 fs-md-7 rounded-3 list-unstyled"
+              >
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">平面電視</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">吹風機</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">冰箱</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">熱水壺</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">檯燈</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">衣櫃</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">除濕機</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">浴缸</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">書桌</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">音響</p>
+                </li>
+              </ul>
+            </section>
 
-                <section>
-                  <h3 class="title-deco mb-4 mb-md-6 text-neutral-100 fs-7 fs-md-5 fw-bold">
-                    房間格局
-                  </h3>
-                  <ul class="d-flex flex-wrap gap-6 gap-md-10 p-6 fs-8 fs-md-7 bg-neutral-0 rounded-3 list-unstyled">
-                    <li class="d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        市景
-                      </p>
-                    </li>
-                    <li class="d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        獨立衛浴
-                      </p>
-                    </li>
-                    <li class="d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        客廳
-                      </p>
-                    </li>
-                    <li class="d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        書房
-                      </p>
-                    </li>
-                    <li class="d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        樓層電梯
-                      </p>
-                    </li>
-                  </ul>
-                </section>
+            <section>
+              <h3
+                class="title-deco mb-4 mb-md-6 text-neutral-100 fs-7 fs-md-5 fw-bold"
+              >
+                備品提供
+              </h3>
+              <ul
+                class="d-flex flex-wrap row-gap-2 column-gap-10 p-6 mb-0 bg-neutral-0 fs-8 fs-md-7 rounded-3 list-unstyled"
+              >
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">衛生紙</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">拖鞋</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">沐浴用品</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">清潔用品</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">刮鬍刀</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">吊衣架</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">浴巾</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">刷牙用品</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">罐裝水</p>
+                </li>
+                <li class="flex-item d-flex gap-2">
+                  <Icon
+                    class="fs-5 text-primary-100"
+                    icon="material-symbols:check"
+                  />
+                  <p class="mb-0 text-neutral-80 fw-bold">梳子</p>
+                </li>
+              </ul>
+            </section>
 
-                <section>
-                  <h3 class="title-deco mb-4 mb-md-6 text-neutral-100 fs-7 fs-md-5 fw-bold">
-                    房內設備
-                  </h3>
-                  <ul class="d-flex flex-wrap row-gap-2 column-gap-10 p-6 mb-0 fs-8 fs-md-7 bg-neutral-0 rounded-3 list-unstyled">
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        平面電視
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        吹風機
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        冰箱
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        熱水壺
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        檯燈
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        衣櫃
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        除濕機
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        浴缸
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        書桌
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        音響
-                      </p>
-                    </li>
-                  </ul>
-                </section>
-
-                <section>
-                  <h3 class="title-deco mb-4 mb-md-6 text-neutral-100 fs-7 fs-md-5 fw-bold">
-                    備品提供
-                  </h3>
-                  <ul class="d-flex flex-wrap row-gap-2 column-gap-10 p-6 mb-0 fs-8 fs-md-7 bg-neutral-0 rounded-3 list-unstyled">
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        衛生紙
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        拖鞋
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        沐浴用品
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        清潔用品
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        刮鬍刀
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        吊衣架
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        浴巾
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        刷牙用品
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        罐裝水
-                      </p>
-                    </li>
-                    <li class="flex-item d-flex gap-2">
-                      <Icon
-                        class="fs-5 text-primary-100"
-                        icon="material-symbols:check"
-                      />
-                      <p class="mb-0 text-neutral-80 fw-bold">
-                        梳子
-                      </p>
-                    </li>
-                  </ul>
-                </section>
-              </div>
+            <section>
+              <h3
+                class="title-deco mb-4 mb-md-6 text-neutral-100 fs-7 fs-md-5 fw-bold"
+              >
+                訂房須知
+              </h3>
+              <ol class="text-neutral-80 fs-8 fs-md-7 fw-medium">
+                <li>入住時間為下午3點，退房時間為上午12點。</li>
+                <li>
+                  如需延遲退房，請提前與櫃檯人員聯繫，視當日房況可能會產生額外費用。
+                </li>
+                <li>
+                  請勿在房間內抽煙，若有抽煙需求，可以使用設在酒店各樓層的專用吸煙區。
+                </li>
+                <li>
+                  若發現房間內的設施有損壞或遺失，將會按照價值收取賠償金。
+                </li>
+                <li>請愛惜我們的房間與公共空間，並保持整潔。</li>
+                <li>如需額外的毛巾、盥洗用品或其他物品，請聯繫櫃檯。</li>
+                <li>
+                  我們提供免費的Wi-Fi，密碼可以在櫃檯或是房間內的資訊卡上找到。
+                </li>
+                <li>
+                  請勿帶走酒店房內的物品，如有需要購買，請與我們的櫃檯人員聯繫。
+                </li>
+                <li>
+                  我們提供24小時櫃檯服務，若有任何需求或疑問，歡迎隨時詢問。
+                </li>
+                <li>
+                  為了確保所有客人的安全，請勿在走廊或公共區域大聲喧嘩，並遵守酒店的其他規定。
+                </li>
+              </ol>
             </section>
           </div>
-
-          <div class="col-12 col-md-5">
+          <div class="d-none d-md-block col-md-5">
             <div
-              class="confirm-form rounded-3xl d-flex flex-column gap-10 p-6 p-md-10 mx-auto ms-md-auto me-md-0 bg-neutral-0"
+              class="rounded-3xl position-sticky d-flex flex-column gap-10 p-10 ms-auto bg-neutral-0"
+              style="top: 160px; max-width: 478px"
             >
-              <img
-                class="img-fluid rounded-3"
-                src="@/assets/images/room-a-1.png"
-                alt="room-a"
+              <h5
+                class="pb-4 mb-0 text-neutral-100 fw-bold border-bottom border-neutral-40"
               >
+                預訂房型
+              </h5>
+
+              <div class="text-neutral-80">
+                <h2 class="fw-bold">尊爵雙人房</h2>
+                <p class="mb-0 fw-medium">
+                  享受高級的住宿體驗，尊爵雙人房提供給您舒適寬敞的空間和精緻的裝潢。
+                </p>
+              </div>
 
               <div>
-                <h2 className="mb-6 text-neutral-100 fs-6 fs-md-4 fw-bold">
-                  價格詳情
-                </h2>
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <div class="d-flex align-items-center text-neutral-100 fw-medium">
-                    <span>NT$ 10,000</span>
-                    <Icon
-                      class="ms-2 me-1 text-neutral-80"
-                      icon="material-symbols:close"
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                  <div class="form-floating flex-grow-1 flex-shrink-1">
+                    <input
+                      id="checkinInput"
+                      readonly
+                      type="date"
+                      :value="bookingDate.date.start"
+                      class="form-control p-4 pt-9 text-neutral-100 fw-medium border-neutral-100 rounded-3"
+                      style="min-height: 74px"
+                      placeholder="yyyy-mm-dd"
+                      @click="openModal"
                     />
-                    <span class="text-neutral-80">2 晚</span>
+                    <label
+                      class="text-neutral-80 fw-medium"
+                      style="top: 8px; left: 8px"
+                      for="checkinInput"
+                      >入住
+                    </label>
                   </div>
-                  <span class="fw-medium">
-                    NT$ 20,000
-                  </span>
+
+                  <div class="form-floating flex-grow-1 flex-shrink-1">
+                    <input
+                      id="checkoutInput"
+                      readonly
+                      type="date"
+                      :value="bookingDate.date.end"
+                      class="form-control p-4 pt-9 text-neutral-100 fw-medium border-neutral-100 rounded-3"
+                      style="min-height: 74px"
+                      placeholder="yyyy-mm-dd"
+                      @click="openModal"
+                    />
+                    <label
+                      class="text-neutral-80 fw-medium"
+                      style="top: 8px; left: 8px"
+                      for="checkoutInput"
+                      >退房
+                    </label>
+                  </div>
                 </div>
-                <div class="d-flex justify-content-between align-items-center fw-medium">
-                  <p class="d-flex align-items-center mb-0 text-neutral-100">
-                    住宿折扣
-                  </p>
-                  <span class="text-primary-100">
-                    -NT$ 1,000
-                  </span>
-                </div>
-                <hr class="my-6 opacity-100 text-neutral-40">
-                <div class="d-flex justify-content-between align-items-center text-neutral-100 fw-bold">
-                  <p class="d-flex align-items-center mb-0">
-                    總價
-                  </p>
-                  <span>
-                    NT$ 19,000
-                  </span>
+
+                <div
+                  class="d-flex justify-content-between align-items-center text-neutral-100"
+                >
+                  <p class="mb-0">人數</p>
+                  <div class="d-flex align-items-center gap-4">
+                    <button
+                      :class="{ 'disabled bg-neutral-40': bookingPeople === 1 }"
+                      class="btn btn-neutral-0 p-4 border border-neutral-40 rounded-circle"
+                      type="button"
+                      @click="bookingPeople--"
+                    >
+                      <Icon
+                        class="fs-5 text-neutral-100"
+                        icon="ic:baseline-minus"
+                      />
+                    </button>
+
+                    <h6
+                      id="people"
+                      class="d-flex justify-content-center align-items-center fw-bold text-neutral-100"
+                      style="width: 24px"
+                      name="people"
+                    >
+                      {{ bookingPeople }}
+                    </h6>
+
+                    <button
+                      :class="{
+                        'disabled bg-neutral-40':
+                          bookingPeople === MAX_BOOKING_PEOPLE,
+                      }"
+                      class="btn btn-neutral-0 p-4 border border-neutral-40 rounded-circle"
+                      type="button"
+                      @click="bookingPeople++"
+                    >
+                      <Icon
+                        class="fs-5 text-neutral-100"
+                        icon="ic:baseline-plus"
+                      />
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <button
+              <h5 class="mb-0 text-primary-100 fw-bold">NT$ 10,000</h5>
+              <RouterLink
+                :to="{
+                  name: 'booking',
+                  params: { roomId: $route.params.roomId },
+                }"
                 class="btn btn-primary-100 py-4 text-neutral-0 fw-bold rounded-3"
-                type="button"
-                @click="confirmBooking"
               >
-                確認訂房
-              </button>
+                立即預訂
+              </RouterLink>
             </div>
           </div>
         </div>
       </div>
+
+      <div
+        class="d-flex d-md-none justify-content-between align-items-center position-fixed bottom-0 w-100 p-3 bg-neutral-0"
+      >
+        <template v-if="bookingDate.date.end === null">
+          <small class="text-neutral-80 fw-medium">ＮＴ$ 10,000 / 晚</small>
+          <button
+            class="btn btn-primary-100 px-12 py-4 text-neutral-0 fw-bold rounded-3"
+            type="button"
+            @click="openModal"
+          >
+            查看可訂日期
+          </button>
+        </template>
+
+        <template v-else>
+          <div class="d-flex flex-column gap-1">
+            <small class="text-neutral-80 fw-medium"
+              >ＮＴ$ 10,000 / {{ daysCount }} 晚 / {{ bookingPeople }} 人</small
+            >
+            <span class="text-neutral fs-9 fw-medium text-decoration-underline"
+              >{{ daysFormatOnMobile(bookingDate.date?.start) }} -
+              {{ daysFormatOnMobile(bookingDate.date?.end) }}</span
+            >
+          </div>
+          <RouterLink
+            :to="{ name: 'booking', params: { roomId: $route.params.roomId } }"
+            class="btn btn-primary-100 px-12 py-4 text-neutral-0 fw-bold rounded-3"
+          >
+            立即預訂
+          </RouterLink>
+        </template>
+      </div>
     </section>
 
-    <BookingLoading v-if="isLoading" />
+    <ClientOnly>
+      <DatePickerModal
+        ref="datePickerModal"
+        :date-time="bookingDate"
+        @handle-date-change="handleDateChange"
+      />
+    </ClientOnly>
   </main>
 </template>
 
@@ -580,8 +576,17 @@ $grid-breakpoints: (
   lg: 992px,
   xl: 1200px,
   xxl: 1400px,
-  xxxl: 1537px
+  xxxl: 1537px,
 );
+
+.rounded-3xl {
+  border-radius: 1.25rem;
+}
+
+.card-info {
+  width: 97px;
+  height: 97px;
+}
 
 .title-deco {
   display: flex;
@@ -589,24 +594,13 @@ $grid-breakpoints: (
 }
 
 .title-deco::before {
-  content: '';
+  content: "";
   display: inline-block;
   width: 4px;
   height: 24px;
-  background-color: #BF9D7D;
+  background-color: #bf9d7d;
   border-radius: 10px;
   margin-right: 0.75rem;
-}
-
-.form-control::placeholder {
-  --neutral-60: #909090;
-  color: var(--neutral-60);
-  font-weight: 500;
-}
-
-.card-info {
-  width: 97px;
-  height: 97px;
 }
 
 .flex-item {
@@ -617,20 +611,7 @@ $grid-breakpoints: (
   }
 }
 
-.rounded-3xl {
-  border-radius: 1.25rem;
+input[type="date"] {
+  cursor: pointer;
 }
-
-.confirm-form {
-  position: sticky;
-  top: 160px;
-  max-width: 478px;
-
-  @include media-breakpoint-down(md) {
-    position: static;
-    top: 0;
-    max-width: auto;
-  }
-}
-
 </style>
