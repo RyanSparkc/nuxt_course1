@@ -1,28 +1,30 @@
 <script setup>
-  import { Icon } from "@iconify/vue"
+  import { Icon } from '@iconify/vue'
 
-  import { Swiper, SwiperSlide } from "swiper/vue"
-  import { Autoplay, Navigation, Pagination } from "swiper/modules"
+  import { Swiper, SwiperSlide } from 'swiper/vue'
+  import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 
-  import "swiper/css"
-  import "swiper/css/navigation"
-  import "swiper/css/pagination"
+  import 'swiper/css'
+  import 'swiper/css/navigation'
+  import 'swiper/css/pagination'
 
   definePageMeta({
-    name: "rooms",
+    name: 'rooms',
   })
 
   const modules = ref([Autoplay, Navigation, Pagination])
 
+  const config = useRuntimeConfig()
   const roomImages = computed(() => {
-    const rooms = ["a", "b", "c", "d"]
+    const rooms = ['a', 'b', 'c', 'd']
     const nums = [1, 2, 3, 4, 5]
+    const baseUrl = config.app.baseURL || '/nuxt_course1'
 
     const result = rooms.reduce((acc, roomId) => {
       acc[`room${roomId.toUpperCase()}`] = nums.reduce((obj, num) => {
         obj[num] = {
-          desktop: `/images/room-${roomId}-${num}.png`,
-          mobile: `/images/room-${roomId}-sm-${num}.png`,
+          desktop: `${baseUrl}/images/room-${roomId}-${num}.png`,
+          mobile: `${baseUrl}/images/room-${roomId}-sm-${num}.png`,
         }
         return obj
       }, {})
@@ -477,7 +479,7 @@
 </template>
 
 <style lang="scss" scoped>
-  @import "bootstrap/scss/mixins/breakpoints";
+  @import 'bootstrap/scss/mixins/breakpoints';
 
   $grid-breakpoints: (
     xs: 0,
