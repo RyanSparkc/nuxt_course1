@@ -1,13 +1,15 @@
 <script setup>
-  import BookingLoading from "@/components/rooms/BookingLoading.vue"
-  import { Icon } from "@iconify/vue"
+  import BookingLoading from '@/components/rooms/BookingLoading.vue'
+  import { Icon } from '@iconify/vue'
+
+  const router = useRouter()
 
   const goBack = () => {
     router.back()
   }
 
   definePageMeta({
-    name: "booking",
+    name: 'booking',
   })
   const isLoading = ref(false)
 
@@ -16,11 +18,10 @@
 
     setTimeout(() => {
       isLoading.value = false
-      navigateTo({
-        name: "booking-confirmation",
+      router.push({
+        name: 'booking-confirmation',
         params: {
-          bookingId: "HH2302183151222",
-          room,
+          bookingId: 'HH2302183151222',
         },
       })
     }, 1500)
@@ -503,7 +504,7 @@
 </template>
 
 <style lang="scss" scoped>
-  @import "bootstrap/scss/mixins/breakpoints";
+  @import 'bootstrap/scss/mixins/breakpoints';
 
   $grid-breakpoints: (
     xs: 0,
@@ -521,7 +522,7 @@
   }
 
   .title-deco::before {
-    content: "";
+    content: '';
     display: inline-block;
     width: 4px;
     height: 24px;
