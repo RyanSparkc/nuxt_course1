@@ -49,7 +49,7 @@
           </li>
         </ul>
 
-        <RouterView />
+        <slot />
       </div>
     </section>
 
@@ -65,6 +65,7 @@
       />
     </picture>
   </main>
+  <AppFooter />
 </template>
 
 <style lang="scss" scoped>

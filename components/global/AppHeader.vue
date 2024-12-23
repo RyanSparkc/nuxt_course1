@@ -34,13 +34,13 @@
   >
     <nav class="navbar navbar-expand-md p-0 px-3 py-4 px-md-20 py-md-6">
       <div class="container-fluid justify-content-between p-0">
-        <RouterLink class="navbar-brand p-0" to="/">
+        <NuxtLink class="navbar-brand p-0" to="/">
           <img
             src="@/assets/images/logo-white.svg"
             alt="logo"
             class="logo img-fluid"
           />
-        </RouterLink>
+        </NuxtLink>
         <button
           class="navbar-toggler collapsed p-2 text-white border-0 shadow-none"
           type="button"
@@ -56,14 +56,9 @@
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="navbar-nav gap-4 ms-auto fw-bold">
             <li class="nav-item">
-              <RouterLink
-                :to="{
-                  name: 'rooms',
-                }"
-                class="nav-link p-4 text-neutral-0"
-              >
+              <NuxtLink to="/rooms" class="nav-link p-4 text-neutral-0">
                 客房旅宿
-              </RouterLink>
+              </NuxtLink>
             </li>
             <li class="d-none d-md-block nav-item">
               <div class="btn-group">
@@ -87,19 +82,24 @@
                     >
                   </li>
                   <li>
-                    <a class="dropdown-item px-6 py-4" href="#">登出</a>
+                    <NuxtLink class="dropdown-item px-6 py-4" to="/account/"
+                      >登出</NuxtLink
+                    >
                   </li>
                 </ul>
               </div>
             </li>
             <li class="d-md-none nav-item">
-              <RouterLink to="/" class="nav-link p-4 text-neutral-0">
+              <NuxtLink
+                to="/account/accountLogin"
+                class="nav-link p-4 text-neutral-0"
+              >
                 會員登入
-              </RouterLink>
+              </NuxtLink>
             </li>
             <li class="nav-item">
               <NuxtLink
-                :to="`/rooms`"
+                to="/rooms"
                 class="btn btn-primary-100 px-8 py-4 text-white fw-bold border-0 rounded-3"
               >
                 立即訂房

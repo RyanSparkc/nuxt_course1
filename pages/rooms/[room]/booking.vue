@@ -2,8 +2,6 @@
   import BookingLoading from "@/components/rooms/BookingLoading.vue"
   import { Icon } from "@iconify/vue"
 
-  const router = useRouter()
-
   const goBack = () => {
     router.back()
   }
@@ -18,10 +16,11 @@
 
     setTimeout(() => {
       isLoading.value = false
-      router.push({
+      navigateTo({
         name: "booking-confirmation",
         params: {
           bookingId: "HH2302183151222",
+          room,
         },
       })
     }, 1500)

@@ -1,49 +1,52 @@
 <script setup>
-import DatePickerModal from "@/components/rooms/DatePickerModal.vue";
-import { Icon } from "@iconify/vue";
+  import DatePickerModal from "@/components/rooms/DatePickerModal.vue"
+  import { Icon } from "@iconify/vue"
 
-definePageMeta({
-  name: "room-detail",
-});
+  definePageMeta({
+    name: "room-detail",
+  })
 
-const datePickerModal = ref(null);
+  const route = useRoute()
+  const { room } = route.params
 
-const openModal = () => {
-  datePickerModal.value.openModal();
-};
+  const datePickerModal = ref(null)
 
-const MAX_BOOKING_PEOPLE = 10;
-const bookingPeople = ref(1);
+  const openModal = () => {
+    datePickerModal.value.openModal()
+  }
 
-const daysCount = ref(0);
+  const MAX_BOOKING_PEOPLE = 10
+  const bookingPeople = ref(1)
 
-const daysFormatOnMobile = (date) => date?.split("-").slice(1, 3).join(" / ");
+  const daysCount = ref(0)
 
-const formatDate = (date) => {
-  const offsetToUTC8 = date.getHours() + 8;
-  date.setHours(offsetToUTC8);
-  return date.toISOString().split("T")[0];
-};
+  const daysFormatOnMobile = (date) => date?.split("-").slice(1, 3).join(" / ")
 
-const currentDate = new Date();
+  const formatDate = (date) => {
+    const offsetToUTC8 = date.getHours() + 8
+    date.setHours(offsetToUTC8)
+    return date.toISOString().split("T")[0]
+  }
 
-const bookingDate = reactive({
-  date: {
-    start: formatDate(currentDate),
-    end: null,
-  },
-  minDate: new Date(),
-  maxDate: new Date(currentDate.setFullYear(currentDate.getFullYear() + 1)),
-});
+  const currentDate = new Date()
 
-const handleDateChange = (bookingInfo) => {
-  const { start, end } = bookingInfo.date;
-  bookingDate.date.start = start;
-  bookingDate.date.end = end;
+  const bookingDate = reactive({
+    date: {
+      start: formatDate(currentDate),
+      end: null,
+    },
+    minDate: new Date(),
+    maxDate: new Date(currentDate.setFullYear(currentDate.getFullYear() + 1)),
+  })
 
-  bookingPeople.value = bookingInfo?.people || 1;
-  daysCount.value = bookingInfo.daysCount;
-};
+  const handleDateChange = (bookingInfo) => {
+    const { start, end } = bookingInfo.date
+    bookingDate.date.start = start
+    bookingDate.date.end = end
+
+    bookingPeople.value = bookingInfo?.people || 1
+    daysCount.value = bookingInfo.daysCount
+  }
 </script>
 
 <template>
@@ -508,15 +511,12 @@ const handleDateChange = (bookingInfo) => {
               </div>
 
               <h5 class="mb-0 text-primary-100 fw-bold">NT$ 10,000</h5>
-              <RouterLink
-                :to="{
-                  name: 'booking',
-                  params: { roomId: $route.params.roomId },
-                }"
+              <NuxtLink
+                :to="`/rooms/${room}/booking`"
                 class="btn btn-primary-100 py-4 text-neutral-0 fw-bold rounded-3"
               >
                 立即預訂
-              </RouterLink>
+              </NuxtLink>
             </div>
           </div>
         </div>
@@ -541,17 +541,18 @@ const handleDateChange = (bookingInfo) => {
             <small class="text-neutral-80 fw-medium"
               >ＮＴ$ 10,000 / {{ daysCount }} 晚 / {{ bookingPeople }} 人</small
             >
+            >
             <span class="text-neutral fs-9 fw-medium text-decoration-underline"
               >{{ daysFormatOnMobile(bookingDate.date?.start) }} -
               {{ daysFormatOnMobile(bookingDate.date?.end) }}</span
             >
           </div>
-          <RouterLink
-            :to="{ name: 'booking', params: { roomId: $route.params.roomId } }"
+          <NuxtLink
+            :to="`/rooms/${room}/booking`"
             class="btn btn-primary-100 px-12 py-4 text-neutral-0 fw-bold rounded-3"
           >
             立即預訂
-          </RouterLink>
+          </NuxtLink>
         </template>
       </div>
     </section>
@@ -567,51 +568,51 @@ const handleDateChange = (bookingInfo) => {
 </template>
 
 <style lang="scss" scoped>
-@import "bootstrap/scss/mixins/breakpoints";
+  @import "bootstrap/scss/mixins/breakpoints";
 
-$grid-breakpoints: (
-  xs: 0,
-  sm: 576px,
-  md: 768px,
-  lg: 992px,
-  xl: 1200px,
-  xxl: 1400px,
-  xxxl: 1537px,
-);
+  $grid-breakpoints: (
+    xs: 0,
+    sm: 576px,
+    md: 768px,
+    lg: 992px,
+    xl: 1200px,
+    xxl: 1400px,
+    xxxl: 1537px,
+  );
 
-.rounded-3xl {
-  border-radius: 1.25rem;
-}
-
-.card-info {
-  width: 97px;
-  height: 97px;
-}
-
-.title-deco {
-  display: flex;
-  align-items: center;
-}
-
-.title-deco::before {
-  content: "";
-  display: inline-block;
-  width: 4px;
-  height: 24px;
-  background-color: #bf9d7d;
-  border-radius: 10px;
-  margin-right: 0.75rem;
-}
-
-.flex-item {
-  flex: 1 1 15%;
-
-  @include media-breakpoint-down(md) {
-    flex-basis: 40%;
+  .rounded-3xl {
+    border-radius: 1.25rem;
   }
-}
 
-input[type="date"] {
-  cursor: pointer;
-}
+  .card-info {
+    width: 97px;
+    height: 97px;
+  }
+
+  .title-deco {
+    display: flex;
+    align-items: center;
+  }
+
+  .title-deco::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 24px;
+    background-color: #bf9d7d;
+    border-radius: 10px;
+    margin-right: 0.75rem;
+  }
+
+  .flex-item {
+    flex: 1 1 15%;
+
+    @include media-breakpoint-down(md) {
+      flex-basis: 40%;
+    }
+  }
+
+  input[type="date"] {
+    cursor: pointer;
+  }
 </style>
