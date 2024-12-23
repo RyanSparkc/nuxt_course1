@@ -18,8 +18,10 @@ export default defineNuxtConfig({
   // 添加基礎路徑配置
   app: {
     // 設定 GitHub Pages 的基礎路徑（替換 'your-repo-name' 為您的倉庫名稱）
-    baseURL: process.env.NODE_ENV === 'production' ? '/nuxt_course1/' : '/',
+    baseURL: '/nuxt_course1/',
     // 設定資源目錄
     buildAssetsDir: 'assets'
   },
+
+
 })
